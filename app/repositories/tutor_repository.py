@@ -1,40 +1,29 @@
-from app.database import linha_para_dict, obter_conexao
+from sqlalchemy import delete, func, insert, select, update
 
-_SELECT_COM_TOTAL = """
-    SELECT t.*, (SELECT COUNT(*) FROM animal a WHERE a.tutor_id = t.id) AS total_animais
-    FROM tutor t
-"""
+from app.database import animal, buscar_um, buscar_varios, executar_e_confirmar, tutor
+
+_total_animais = (
+    select(func.count()).where(animal.c.tutor_id == tutor.c.id).scalar_subquery().label("total_animais")
+)
+_SELECT_COM_TOTAL = select(tutor, _total_animais)
 
 
 def listar():
-    linhas = obter_conexao().execute(_SELECT_COM_TOTAL + " ORDER BY t.nome").fetchall()
-    return [dict(linha) for linha in linhas]
+    return buscar_varios(_SELECT_COM_TOTAL.order_by(tutor.c.nome))
 
 
 def buscar(tutor_id):
-    linha = obter_conexao().execute(_SELECT_COM_TOTAL + " WHERE t.id = ?", (tutor_id,)).fetchone()
-    return linha_para_dict(linha)
+    return buscar_um(_SELECT_COM_TOTAL.where(tutor.c.id == tutor_id))
 
 
 def criar(dados):
-    conexao = obter_conexao()
-    cursor = conexao.execute(
-        "INSERT INTO tutor (nome, telefone, email) VALUES (:nome, :telefone, :email)", dados
-    )
-    conexao.commit()
-    return cursor.lastrowid
+    resultado = executar_e_confirmar(insert(tutor).values(**dados))
+    return resultado.inserted_primary_key[0]
 
 
 def atualizar(tutor_id, dados):
-    conexao = obter_conexao()
-    conexao.execute(
-        "UPDATE tutor SET nome = :nome, telefone = :telefone, email = :email WHERE id = :id",
-        {**dados, "id": tutor_id},
-    )
-    conexao.commit()
+    executar_e_confirmar(update(tutor).where(tutor.c.id == tutor_id).values(**dados))
 
 
 def excluir(tutor_id):
-    conexao = obter_conexao()
-    conexao.execute("DELETE FROM tutor WHERE id = ?", (tutor_id,))
-    conexao.commit()
+    executar_e_confirmar(delete(tutor).where(tutor.c.id == tutor_id))

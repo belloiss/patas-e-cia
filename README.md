@@ -12,8 +12,9 @@ Aplicação web da disciplina N695 (Desenvolvimento de Plataformas Web), Cenári
 
 - Interface: HTML, CSS e JavaScript puro (pasta `static/`), consumindo a API por `fetch`.
 - Serviço Web: Python 3 + Flask (API REST em `/api`).
-- Persistência: SQLite (banco de dados relacional com chave estrangeira entre `animal` e `tutor`).
-- Hospedagem sugerida: Render (plano gratuito).
+- Persistência: PostgreSQL (banco de dados relacional com chave estrangeira entre `animal` e `tutor`), acessado com SQLAlchemy Core.
+  Sem a variável `DATABASE_URL`, a aplicação usa um arquivo SQLite local (útil para desenvolver e para os testes); o código é o mesmo.
+- Hospedagem: Render (aplicação) + Neon (PostgreSQL), ambos no plano gratuito.
 
 ## Estrutura em camadas
 
@@ -21,7 +22,8 @@ Aplicação web da disciplina N695 (Desenvolvimento de Plataformas Web), Cenári
 app/
   routes/         interface HTTP (recebe a requisição e devolve JSON)
   services/       regras de negócio (ex.: bloqueio de exclusão)
-  repositories/   acesso ao banco (SQL)
+  repositories/   consultas ao banco
+  database.py     tabelas, conexão e execução de comandos
   validators.py   validação de entrada
   errors.py       erros de negócio -> respostas HTTP claras
 static/           telas HTML, CSS e JS
@@ -52,15 +54,23 @@ python -m flask --app wsgi run
 
 Acesse http://127.0.0.1:5000. Para os testes: `python -m unittest discover -s tests -v`.
 
-## Publicar no Render
+Para rodar localmente usando PostgreSQL, defina a variável antes de iniciar:
+`DATABASE_URL=postgresql://usuario:senha@host/banco` (no PowerShell: `$env:DATABASE_URL="..."`).
+
+## Publicar (Neon + Render)
 
 1. Suba o projeto para um repositório **público** no GitHub.
-2. No Render, crie um **Web Service** a partir do repositório.
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `gunicorn wsgi:app`
-5. Teste o link gerado e confirme que abre sem login.
+2. Em [neon.tech](https://neon.tech), crie um projeto gratuito e copie a *connection string*
+   (começa com `postgresql://` e termina com `?sslmode=require`).
+3. No Render, crie um **Web Service** a partir do repositório:
+   - Build command: `pip install -r requirements.txt`
+   - Start command: `gunicorn wsgi:app`
+   - Em *Environment*, adicione a variável `DATABASE_URL` com a connection string do Neon.
+4. As tabelas são criadas automaticamente na primeira execução.
+5. Teste o link gerado numa aba anônima e confirme que abre sem login.
 
-Observação: no plano gratuito o disco é temporário, então o banco SQLite volta ao vazio quando o serviço reinicia ou é republicado. Cadastre alguns dados de exemplo antes de tirar as capturas de tela e antes da correção. Para dados permanentes, é possível trocar o SQLite por um PostgreSQL gratuito mexendo apenas na camada `repositories/`.
+Os dados ficam no Neon, então não se perdem quando o Render reinicia ou republica o serviço.
+No plano gratuito, o Render "dorme" após 15 minutos sem acesso; o primeiro acesso depois disso pode levar cerca de 1 minuto.
 
 ## Uso de IA generativa
 

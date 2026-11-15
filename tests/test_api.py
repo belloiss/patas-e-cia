@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 
-from app import create_app
+from app import create_app, database
 
 TUTOR_VALIDO = {"nome": "Maria Souza", "telefone": "(85) 98888-7777", "email": "maria@exemplo.com"}
 ANIMAL_VALIDO = {"nome": "Thor", "especie": "Cão", "raca": "Vira-lata", "idade_anos": 3}
@@ -12,9 +12,11 @@ class ApiTestCase(unittest.TestCase):
     def setUp(self):
         self.arquivo = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
         self.arquivo.close()
-        self.client = create_app({"DATABASE_PATH": self.arquivo.name, "TESTING": True}).test_client()
+        self.app = create_app({"DATABASE_URL": f"sqlite:///{self.arquivo.name}", "TESTING": True})
+        self.client = self.app.test_client()
 
     def tearDown(self):
+        database.encerrar_banco(self.app)
         os.unlink(self.arquivo.name)
 
     def criar_tutor(self, dados=None):

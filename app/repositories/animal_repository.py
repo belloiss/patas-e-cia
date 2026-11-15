@@ -1,41 +1,24 @@
-from app.database import linha_para_dict, obter_conexao
+from sqlalchemy import delete, insert, select, update
+
+from app.database import animal, buscar_um, buscar_varios, executar_e_confirmar
 
 
 def listar_do_tutor(tutor_id):
-    linhas = obter_conexao().execute(
-        "SELECT * FROM animal WHERE tutor_id = ? ORDER BY nome", (tutor_id,)
-    ).fetchall()
-    return [dict(linha) for linha in linhas]
+    return buscar_varios(select(animal).where(animal.c.tutor_id == tutor_id).order_by(animal.c.nome))
 
 
 def buscar(animal_id):
-    linha = obter_conexao().execute("SELECT * FROM animal WHERE id = ?", (animal_id,)).fetchone()
-    return linha_para_dict(linha)
+    return buscar_um(select(animal).where(animal.c.id == animal_id))
 
 
 def criar(tutor_id, dados):
-    conexao = obter_conexao()
-    cursor = conexao.execute(
-        """INSERT INTO animal (tutor_id, nome, especie, raca, idade_anos)
-           VALUES (:tutor_id, :nome, :especie, :raca, :idade_anos)""",
-        {**dados, "tutor_id": tutor_id},
-    )
-    conexao.commit()
-    return cursor.lastrowid
+    resultado = executar_e_confirmar(insert(animal).values(**dados, tutor_id=tutor_id))
+    return resultado.inserted_primary_key[0]
 
 
 def atualizar(animal_id, dados):
-    conexao = obter_conexao()
-    conexao.execute(
-        """UPDATE animal
-           SET nome = :nome, especie = :especie, raca = :raca, idade_anos = :idade_anos
-           WHERE id = :id""",
-        {**dados, "id": animal_id},
-    )
-    conexao.commit()
+    executar_e_confirmar(update(animal).where(animal.c.id == animal_id).values(**dados))
 
 
 def excluir(animal_id):
-    conexao = obter_conexao()
-    conexao.execute("DELETE FROM animal WHERE id = ?", (animal_id,))
-    conexao.commit()
+    executar_e_confirmar(delete(animal).where(animal.c.id == animal_id))

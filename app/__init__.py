@@ -10,16 +10,16 @@ from app.routes import animais, tutores
 
 def create_app(config=None):
     app = Flask(__name__, static_folder="../static", static_url_path="")
-    app.config["DATABASE_PATH"] = os.environ.get("DATABASE_PATH", "instance/clinica.db")
+    app.config["DATABASE_URL"] = os.environ.get("DATABASE_URL")
     app.config.update(config or {})
+    if not app.config["DATABASE_URL"]:
+        app.config["DATABASE_URL"] = database.url_padrao(app)
 
+    database.inicializar_banco(app)
     app.teardown_appcontext(database.fechar_conexao)
     app.register_blueprint(tutores.bp)
     app.register_blueprint(animais.bp)
     _registrar_tratadores_de_erro(app)
-
-    with app.app_context():
-        database.inicializar_banco()
 
     @app.get("/")
     def pagina_inicial():
