@@ -7,6 +7,12 @@ from app import database
 from app.errors import AppError
 from app.routes import animais, tutores
 
+MENSAGENS_HTTP = {
+    400: "Requisição inválida.",
+    404: "Endereço não encontrado. Verifique o link e tente novamente.",
+    405: "Operação não permitida neste endereço.",
+}
+
 
 def create_app(config=None):
     app = Flask(__name__, static_folder="../static", static_url_path="")
@@ -36,6 +42,7 @@ def _registrar_tratadores_de_erro(app):
     @app.errorhandler(Exception)
     def tratar_erro_inesperado(erro):
         if isinstance(erro, HTTPException):
-            return jsonify({"erro": erro.description, "campos": {}}), erro.code
+            mensagem = MENSAGENS_HTTP.get(erro.code, "Não foi possível concluir a requisição.")
+            return jsonify({"erro": mensagem, "campos": {}}), erro.code
         app.logger.exception(erro)
         return jsonify({"erro": "Erro interno. Tente novamente em instantes.", "campos": {}}), 500

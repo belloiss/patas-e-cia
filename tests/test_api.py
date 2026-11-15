@@ -107,7 +107,7 @@ class AnimalTests(ApiTestCase):
     def test_rota_inexistente_retorna_json(self):
         resposta = self.client.get("/api/nada")
         self.assertEqual(resposta.status_code, 404)
-        self.assertIn("erro", resposta.get_json())
+        self.assertIn("não encontrado", resposta.get_json()["erro"])
 
 
 if __name__ == "__main__":
