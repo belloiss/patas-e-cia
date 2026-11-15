@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tutores | Patas &amp; Cia</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topo"><div class="topo__conteudo"><a class="topo__marca" href="index.html">Patas &amp; Cia</a><span class="topo__legenda">Cadastro de tutores e animais</span></div></header>
+  <main>
+    <div class="barra">
+      <div>
+        <h1>Tutores</h1>
+        <p class="subtitulo">Encontre o tutor e abra a lista de animais dele.</p>
+      </div>
+      <a class="botao" href="tutor-form.html">Novo tutor</a>
+    </div>
+    <div id="aviso" class="aviso" role="alert" hidden></div>
+    <div class="tabela-envoltorio">
+      <table>
+        <thead><tr><th>Nome</th><th>Telefone</th><th>Animais</th><th></th></tr></thead>
+        <tbody id="corpo-tabela"></tbody>
+      </table>
+    </div>
+  </main>
+  <script src="js/api.js"></script>
+  <script src="js/tutores.js"></script>
+</body>
+</html>

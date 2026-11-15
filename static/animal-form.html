@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Animal | Patas &amp; Cia</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topo"><div class="topo__conteudo"><a class="topo__marca" href="index.html">Patas &amp; Cia</a><span class="topo__legenda">Cadastro de tutores e animais</span></div></header>
+  <main>
+    <a class="voltar" id="voltar" href="#">Voltar para os animais</a>
+    <h1 id="titulo">Novo animal</h1>
+    <div id="aviso" class="aviso" role="alert" hidden></div>
+    <form id="formulario" class="formulario" novalidate>
+      <div class="campo">
+        <label for="nome">Nome do animal</label>
+        <input id="nome" name="nome" autocomplete="off">
+        <p class="campo__erro" data-erro="nome"></p>
+      </div>
+      <div class="campo">
+        <label for="especie">Espécie</label>
+        <select id="especie" name="especie">
+          <option value="">Escolha uma espécie</option>
+          <option>Cão</option><option>Gato</option><option>Ave</option>
+          <option>Roedor</option><option>Réptil</option><option>Outro</option>
+        </select>
+        <p class="campo__erro" data-erro="especie"></p>
+      </div>
+      <div class="campo">
+        <label for="raca">Raça (opcional)</label>
+        <input id="raca" name="raca" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="idade_anos">Idade em anos (opcional)</label>
+        <input id="idade_anos" name="idade_anos" type="number" inputmode="numeric">
+        <p class="campo__erro" data-erro="idade_anos"></p>
+      </div>
+      <div class="formulario__acoes">
+        <button class="botao" type="submit">Salvar animal</button>
+        <a class="botao botao--secundario" id="cancelar" href="#">Cancelar</a>
+      </div>
+    </form>
+  </main>
+  <script src="js/api.js"></script>
+  <script src="js/animal-form.js"></script>
+</body>
+</html>
