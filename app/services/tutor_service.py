@@ -31,9 +31,11 @@ def atualizar(tutor_id, dados):
 
 def excluir(tutor_id):
     tutor = obter_ou_falhar(tutor_id)
-    if tutor["total_animais"] > 0:
+    total = tutor["total_animais"]
+    if total > 0:
+        animais = "1 animal cadastrado" if total == 1 else f"{total} animais cadastrados"
         raise ConflictError(
             f"Não é possível excluir {tutor['nome']}: o tutor ainda tem "
-            f"{tutor['total_animais']} animal(is) cadastrado(s). Exclua os animais primeiro."
+            f"{animais}. Exclua os animais primeiro."
         )
     tutor_repository.excluir(tutor_id)

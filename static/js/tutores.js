@@ -1,10 +1,15 @@
 const corpoTabela = document.getElementById("corpo-tabela");
 
+function descreverQuantidadeDeAnimais(total) {
+  if (total === 0) return "Nenhum animal";
+  return total === 1 ? "1 animal" : `${total} animais`;
+}
+
 function linhaDoTutor(tutor) {
   return `<tr>
     <td>${escaparHtml(tutor.nome)}</td>
     <td>${formatarTelefone(tutor.telefone)}</td>
-    <td><a href="animais.html?tutor=${tutor.id}">${tutor.total_animais} animal(is)</a></td>
+    <td><a href="animais.html?tutor=${tutor.id}">${descreverQuantidadeDeAnimais(tutor.total_animais)}</a></td>
     <td class="acoes">
       <a class="botao botao--secundario botao--pequeno" href="tutor-form.html?id=${tutor.id}">Editar</a>
       <button class="botao botao--perigo botao--pequeno" data-excluir="${tutor.id}">Excluir</button>
