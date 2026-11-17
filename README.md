@@ -2,6 +2,9 @@
 
 Aplicação web da disciplina N695 (Desenvolvimento de Plataformas Web), Cenário 1: Clínica veterinária de bairro.
 
+- **Aplicação publicada:** https://patas-e-cia-d5ve.onrender.com
+- **Repositório:** https://github.com/belloiss/patas-e-cia
+
 ## O que faz
 
 - Cadastra, lista, edita e exclui **tutores** e **animais** (um tutor tem vários animais).
